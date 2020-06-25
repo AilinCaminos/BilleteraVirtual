@@ -19,7 +19,8 @@ public class Persona {
     private String documento;
     @Column(name = "fecha_nacimiento")
     private Date fechaNacimiento;
-    private Usuario usuarioId;
+    @OneToOne(mappedBy = "persona", cascade = CascadeType.ALL)
+    private Usuario usuario;
     @OneToOne(mappedBy = "persona", cascade = CascadeType.ALL)
     private Billetera billetera;
 
@@ -71,12 +72,14 @@ public class Persona {
         this.fechaNacimiento = fechaNacimiento;
     }
 
-    public Usuario getUsuarioId() {
-        return usuarioId;
+    public Usuario getUsuario() {
+        return usuario;
     }
-
-    public void setUsuarioId(Usuario usuarioId) {
-        this.usuarioId = usuarioId;
+    
+    // bidireccion atravez del set
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+        this.usuario.setPersona(this);
     }
 
     public Billetera getBilletera() {
