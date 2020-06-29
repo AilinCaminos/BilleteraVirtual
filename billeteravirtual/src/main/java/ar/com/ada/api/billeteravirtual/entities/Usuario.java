@@ -10,7 +10,7 @@ public class Usuario {
     @Id
     @Column(name = "usuario_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int usuariId;
+    private int usuarioId;
     private String username;
     private String password;
     private String email;
@@ -20,12 +20,12 @@ public class Usuario {
     @JoinColumn(name = "persona_id", referencedColumnName = "persona_id")
     private Persona persona;
 
-    public int getUsuariId() {
-        return usuariId;
+    public int getUsuarioId() {
+        return usuarioId;
     }
 
-    public void setUsuariId(int usuariId) {
-        this.usuariId = usuariId;
+    public void setUsuarioId(int usuarioId) {
+        this.usuarioId = usuarioId;
     }
 
     public String getUsername() {
