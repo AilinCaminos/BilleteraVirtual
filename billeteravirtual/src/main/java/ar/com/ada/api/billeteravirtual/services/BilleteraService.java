@@ -1,10 +1,20 @@
 package ar.com.ada.api.billeteravirtual.services;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import ar.com.ada.api.billeteravirtual.entities.Billetera;
+import ar.com.ada.api.billeteravirtual.repositories.BilleteraRepository;
 
 @Service
 public class BilleteraService {
 
+    @Autowired
+    BilleteraRepository billeteraRepository;
+
+    public void grabar(Billetera billetera){
+        billeteraRepository.save(billetera);
+    }
     
     /**
      * Metodo cargarSaldo 
