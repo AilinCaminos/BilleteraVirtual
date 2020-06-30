@@ -64,8 +64,8 @@ public class UsuarioService {
 
         Cuenta dolares = new Cuenta();
 
-        pesos.setSaldo(new BigDecimal(0));
-        pesos.setMoneda("USD");
+        dolares.setSaldo(new BigDecimal(0));
+        dolares.setMoneda("USD");
 
         billetera.agregarCuenta(pesos);
         billetera.agregarCuenta(dolares);
