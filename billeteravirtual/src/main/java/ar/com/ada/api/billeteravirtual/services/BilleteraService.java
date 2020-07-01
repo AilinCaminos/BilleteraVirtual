@@ -65,8 +65,27 @@ public class BilleteraService {
         this.grabar(billetera);
     }
 
-    
+      /**
+      * Metodo consultarSaldo
+      * buscar billetera por id
+      * se identifica cuenta por moneda
+      * traer saldo
+      */
 
+    public BigDecimal consultarSaldo (Integer billeteraId, String moneda){
+
+        Billetera billetera = billeteraRepository.findByBilleteraId(billeteraId);
+
+        Cuenta cuenta = billetera.getCuenta(moneda);
+
+        return cuenta.getSaldo();
+
+    }
+
+    public Billetera buscarPorId(Integer id){
+
+        return billeteraRepository.findByBilleteraId(id);
+    }
 
     /**
      * Metodo enviarSaldo 
@@ -81,12 +100,7 @@ public class BilleteraService {
      * 
      */
 
-     /**
-      * Metodo consultarSaldo
-      * buscar billetera por id
-      * se identifica cuenta por moneda
-      * traer saldo
-      */
+     
 
 
      
