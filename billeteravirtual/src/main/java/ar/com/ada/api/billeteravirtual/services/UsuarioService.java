@@ -4,12 +4,14 @@ import java.math.BigDecimal;
 import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 
 import ar.com.ada.api.billeteravirtual.entities.Billetera;
 import ar.com.ada.api.billeteravirtual.entities.Cuenta;
 import ar.com.ada.api.billeteravirtual.entities.Persona;
 import ar.com.ada.api.billeteravirtual.entities.Usuario;
+import ar.com.ada.api.billeteravirtual.repositories.UsuarioRepository;
 import ar.com.ada.api.billeteravirtual.security.Crypto;
 @Service
 public class UsuarioService {
@@ -18,16 +20,26 @@ public class UsuarioService {
     PersonaService personaService;
     @Autowired
     BilleteraService billeteraService;
+    @Autowired
+    UsuarioRepository usuarioRepository;
 
-	public Usuario buscarPorUsername(String username) {
-		return null;
-	}
-
-	public void login(String username, String password) {
-         /**Metodo IniciarSesion
+    public Usuario buscarPorUsername(String username) {
+      return usuarioRepository.findByUsername(username);
+    }
+  
+    public void login(String username, String password) {
+      
+      /**Metodo IniciarSesion
       * recibe usuario y contraseña
       * validar usuario y contraseña
       */
+  
+      Usuario u = buscarPorUsername(username);
+  
+      if (u == null || !u.getPassword().equals(Crypto.encrypt(password, u.getUsername()))) {
+  
+        throw new BadCredentialsException("Usuario o contraseña invalida");
+      }
     }
     
     public Usuario crearUsuario(String nombre, int pais, int tipoDocumento, String documento, Date fechaNacimiento, String email, String password) {
@@ -78,4 +90,6 @@ public class UsuarioService {
 
         return usuario;
     }
+
+    
 }
