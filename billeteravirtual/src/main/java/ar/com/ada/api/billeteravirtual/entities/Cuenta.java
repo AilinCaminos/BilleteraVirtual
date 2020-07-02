@@ -10,7 +10,7 @@ import javax.persistence.*;
 public class Cuenta {
 
     @Id
-    @Column(name= "cuenta_id")
+    @Column(name = "cuenta_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer cuentaId;
     private BigDecimal saldo;
@@ -62,8 +62,49 @@ public class Cuenta {
     }
 
     // Se hace relacion bidireccional con este metodo
-    public void agregarTransaccion(Transaccion transaccion){
+    public void agregarTransaccion(Transaccion transaccion) {
         this.transacciones.add(transaccion);
         transaccion.setCuenta(this);
+
+        BigDecimal saldoActual = this.getSaldo();
+        BigDecimal importe = transaccion.getImporte();
+        BigDecimal saldoNuevo;
+
+		if (transaccion.getTipoOperacion().equals(1)) {
+
+			saldoNuevo = saldoActual.add(importe);
+			
+		} else {
+
+			saldoNuevo = saldoActual.subtract(importe);
+			
+        }
+        this.setSaldo(saldoNuevo);
+    }
+
+    public Transaccion generarTransaccion(String conceptoOperacion, String detalle, BigDecimal importe,
+            Integer tipoOp) {
+
+        Transaccion transaccion = new Transaccion();
+
+        transaccion.setMoneda(moneda);
+        transaccion.setFecha(new Date());
+        transaccion.setConceptoOperacion(conceptoOperacion);
+        transaccion.setDetalle(detalle);
+        transaccion.setImporte(importe);
+        transaccion.setTipoOperacion(tipoOp);// 1 Entrada, 0 Salida
+        transaccion.setEstadoId(2);// -1 Rechazada 0 Pendiente 2 Aprobada
+
+        if (transaccion.getTipoOperacion() == 1) { // Es de entrada
+
+            transaccion.setaUsuarioId(billetera.getPersona().getUsuario().getUsuarioId());
+            transaccion.setaCuentaId(this.getCuentaId());
+        } else {
+            // Es de salida
+            transaccion.setDeCuentaId(this.getCuentaId());
+            transaccion.setDeUsuarioId(billetera.getPersona().getUsuario().getUsuarioId());
+        }
+
+        return transaccion;
     }
 }
