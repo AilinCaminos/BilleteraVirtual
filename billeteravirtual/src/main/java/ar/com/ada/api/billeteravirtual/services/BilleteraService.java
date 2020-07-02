@@ -120,6 +120,9 @@ public class BilleteraService {
         cuentaSaliente.agregarTransaccion(tSaliente);
         cuentaEntrante.agregarTransaccion(tEntrante);
 
+        this.grabar(billeteraSaliente);
+        this.grabar(billeteraEntrante);
+
     }
 
     public void enviarSaldo(BigDecimal importe, String moneda, Integer billeteraOrigenId, String email, String concepto,
