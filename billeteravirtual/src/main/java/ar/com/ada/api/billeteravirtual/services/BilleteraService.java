@@ -25,6 +25,14 @@ public class BilleteraService {
         billeteraRepository.save(billetera);
     }
 
+    public void cargarSaldo(BigDecimal saldo, String moneda, Integer billeteraId, String conceptoOperacion,
+            String detalle) {
+
+                Billetera billetera = this.buscarPorId(billeteraId);
+
+                cargarSaldo(saldo, moneda, billetera, conceptoOperacion, detalle);
+            }
+
     /**
      * Metodo cargarSaldo buscar billetera por id se identifica cuenta por moneda
      * determinar importe a cargar hacer transaccion
@@ -33,10 +41,8 @@ public class BilleteraService {
      * 
      */
 
-    public void cargarSaldo(BigDecimal saldo, String moneda, Integer billeteraId, String conceptoOperacion,
+    public void cargarSaldo(BigDecimal saldo, String moneda, Billetera billetera, String conceptoOperacion,
             String detalle) {
-
-        Billetera billetera = billeteraRepository.findByBilleteraId(billeteraId);
 
         Cuenta cuenta = billetera.getCuenta(moneda);
 
@@ -56,12 +62,9 @@ public class BilleteraService {
 
         cuenta.agregarTransaccion(transaccion);
 
-        // Esto vamos a ver despues que pasa
-        BigDecimal saldoActual = cuenta.getSaldo();
-        BigDecimal saldoNuevo = saldoActual.add(saldo);
-        cuenta.setSaldo(saldoNuevo);
-
+        
         this.grabar(billetera);
+
     }
 
     /**
