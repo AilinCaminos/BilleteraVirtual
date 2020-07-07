@@ -8,6 +8,8 @@ import javax.persistence.*;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
+import ar.com.ada.api.billeteravirtual.entities.Transaccion.TipoTransaccionEnum;
+
 @Entity
 @Table(name = "cuenta")
 public class Cuenta {
@@ -74,20 +76,20 @@ public class Cuenta {
         BigDecimal importe = transaccion.getImporte();
         BigDecimal saldoNuevo;
 
-		if (transaccion.getTipoOperacion().equals(1)) {
+        if (transaccion.getTipoOperacion() == TipoTransaccionEnum.ENTRANTE) {
 
-			saldoNuevo = saldoActual.add(importe);
-			
-		} else {
+            saldoNuevo = saldoActual.add(importe);
 
-			saldoNuevo = saldoActual.subtract(importe);
-			
+        } else {
+
+            saldoNuevo = saldoActual.subtract(importe);
+
         }
         this.setSaldo(saldoNuevo);
     }
 
     public Transaccion generarTransaccion(String conceptoOperacion, String detalle, BigDecimal importe,
-            Integer tipoOp) {
+            TipoTransaccionEnum tipoOp) {
 
         Transaccion transaccion = new Transaccion();
 
@@ -99,7 +101,7 @@ public class Cuenta {
         transaccion.setTipoOperacion(tipoOp);// 1 Entrada, 0 Salida
         transaccion.setEstadoId(2);// -1 Rechazada 0 Pendiente 2 Aprobada
 
-        if (transaccion.getTipoOperacion() == 1) { // Es de entrada
+        if (transaccion.getTipoOperacion() == TipoTransaccionEnum.ENTRANTE) { // Es de entrada
 
             transaccion.setaUsuarioId(billetera.getPersona().getUsuario().getUsuarioId());
             transaccion.setaCuentaId(this.getCuentaId());
@@ -111,4 +113,5 @@ public class Cuenta {
 
         return transaccion;
     }
+
 }
