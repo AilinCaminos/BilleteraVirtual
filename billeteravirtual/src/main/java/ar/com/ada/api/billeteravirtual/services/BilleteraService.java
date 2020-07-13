@@ -70,7 +70,7 @@ public class BilleteraService {
 
         this.grabar(billetera);
 
-        emailService.SendEmail(billetera.getPersona().getUsuario().getEmail(), "Carga Saldo", "Se cargo con exito el saldo de " + saldo);
+        emailService.SendEmail(billetera.getPersona().getUsuario().getEmail(), "Carga Saldo", "Tu carga fue exitosa. Saldo: " + saldo);
 
     }
 
