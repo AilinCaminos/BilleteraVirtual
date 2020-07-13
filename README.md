@@ -1,0 +1,1 @@
+WEB API. Billetera Virtual. Proyecto con Springboot. Se utiliza MySQL como DB. Se utiliza Postman para probar la WEB API. Se empieza a practicar Testing Unitario. Se utiliza Mailgun para el envio de mails.
