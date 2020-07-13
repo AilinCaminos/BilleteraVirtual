@@ -13,6 +13,7 @@ import ar.com.ada.api.billeteravirtual.entities.Usuario;
 import ar.com.ada.api.billeteravirtual.entities.Transaccion.ResultadoTransaccionEnum;
 import ar.com.ada.api.billeteravirtual.entities.Transaccion.TipoTransaccionEnum;
 import ar.com.ada.api.billeteravirtual.repositories.BilleteraRepository;
+import ar.com.ada.api.billeteravirtual.sistema.comm.EmailService;
 
 @Service
 public class BilleteraService {
@@ -22,6 +23,9 @@ public class BilleteraService {
 
     @Autowired
     UsuarioService usuarioService;
+
+    @Autowired
+    EmailService emailService;
 
     public void grabar(Billetera billetera) {
         billeteraRepository.save(billetera);
@@ -65,6 +69,8 @@ public class BilleteraService {
         cuenta.agregarTransaccion(transaccion);
 
         this.grabar(billetera);
+
+        emailService.SendEmail(billetera.getPersona().getUsuario().getEmail(), "Carga Saldo", "Se cargo con exito el saldo de " + saldo);
 
     }
 
@@ -142,6 +148,9 @@ public class BilleteraService {
 
         this.grabar(billeteraSaliente);
         this.grabar(billeteraEntrante);
+
+        emailService.SendEmail(billeteraSaliente.getPersona().getUsuario().getEmail(), "Transferencia", "Se realizo la transferencia con exito a " + billeteraEntrante.getPersona().getUsuario().getEmail() + " y recibio " + importe);
+        emailService.SendEmail(billeteraEntrante.getPersona().getUsuario().getEmail(), "Transferencia", "Recibio " + importe + " de el usuario " + billeteraSaliente.getPersona().getUsuario().getEmail());
 
         return ResultadoTransaccionEnum.INICIADA;
 

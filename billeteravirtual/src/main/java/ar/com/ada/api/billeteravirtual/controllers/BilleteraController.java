@@ -27,13 +27,11 @@ public class BilleteraController {
 
     /*
      * webMetodo 1: consultar saldo: GET URL:/billeteras/{id}/saldos
-     * URL:/billeteras/{id}/saldos/{moneda}
-     *  webMetodo 2: cargar saldo: POST
+     * URL:/billeteras/{id}/saldos/{moneda} 
+     * webMetodo 2: cargar saldo: POST
      * URL:/billeteras/{id}/recargas requestBody: { "moneda": "importe": } 
-     * webMetodo
-     * 3:
-     * 
-     * enviar saldo: POST URL:/billetera/{id}/envios requestBody: { "moneda":
+     * webMetodo 3:
+     *      * enviar saldo: POST URL:/billetera/{id}/envios requestBody: { "moneda":
      * "importe": "email": "motivo": "detalleDelMotivo": }
      */
 
@@ -68,11 +66,13 @@ public class BilleteraController {
         return ResponseEntity.ok(saldos);
     }
 
-    /**  webMetodo 2: cargar saldo: POST
-    * URL:/billeteras/{id}/recargas requestBody: { "moneda": "importe": } 
-    * webMetodo */ 
+    /**
+     * webMetodo 2: cargar saldo: POST URL:/billeteras/{id}/recargas requestBody: {
+     * "moneda": "importe": } webMetodo
+     */
     @PostMapping("/billeteras/{id}/recargas")
-    public ResponseEntity<TransaccionResponse> cargarSaldo(@PathVariable Integer id, @RequestBody CargaRequest recarga){
+    public ResponseEntity<TransaccionResponse> cargarSaldo(@PathVariable Integer id,
+            @RequestBody CargaRequest recarga) {
 
         TransaccionResponse response = new TransaccionResponse();
 
@@ -84,29 +84,31 @@ public class BilleteraController {
         return ResponseEntity.ok(response);
 
     }
-    
-/*** enviar saldo: POST URL:/billeteras/{id}/envios requestBody: { "moneda":
-     * "importe": "email": "motivo": "detalleDelMotivo": }
-     */ 
 
-     @PostMapping("/billeteras/{id}/envios")
-     public ResponseEntity<TransaccionResponse> enviarSaldo(@PathVariable Integer id, @RequestBody EnvioSaldoRequest envio){
+    /***
+     * enviar saldo: POST URL:/billeteras/{id}/envios requestBody: { "moneda":
+     * "importe": "email": "motivo": "detalleDelMotivo": }
+     */
+
+    @PostMapping("/billeteras/{id}/envios")
+    public ResponseEntity<TransaccionResponse> enviarSaldo(@PathVariable Integer id,
+            @RequestBody EnvioSaldoRequest envio) {
 
         TransaccionResponse response = new TransaccionResponse();
-        ResultadoTransaccionEnum resultado = billeteraService.enviarSaldo(envio.importe, envio.moneda, id, envio.email, envio.motivo, envio.detalle);
+        ResultadoTransaccionEnum resultado = billeteraService.enviarSaldo(envio.importe, envio.moneda, id, envio.email,
+                envio.motivo, envio.detalle);
 
-        if(resultado == ResultadoTransaccionEnum.INICIADA){
-        response.isOk = true;
-        response.message = "Se envio el saldo exitosamente";
-        
-        return ResponseEntity.ok(response);
+        if (resultado == ResultadoTransaccionEnum.INICIADA) {
+            response.isOk = true;
+            response.message = "Se envio el saldo exitosamente";
+
+            return ResponseEntity.ok(response);
         }
         response.isOk = false;
         response.message = "Hubo un error al realizar la operacion " + resultado;
 
         return ResponseEntity.badRequest().body(response);
 
-     }
-    
+    }
 
 }

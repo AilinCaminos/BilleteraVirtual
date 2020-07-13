@@ -92,7 +92,7 @@ class DemoApplicationTests {
 
 		// assertTrue(usuario.getUsuarioId() == usuarioVerificado.getUsuarioId());
 		assertTrue(usuario.getUsuarioId() > 0);
-		assertTrue(usuario.getPersona().getBilletera().getCuenta("ARS").getSaldo().equals(new BigDecimal(500)));
+		assertTrue(usuario.getPersona().getBilletera().getCuenta("ARS").getSaldo().compareTo(new BigDecimal(500)) == 0);
 
 	}
 
