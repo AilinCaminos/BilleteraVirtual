@@ -91,7 +91,7 @@ public class UsuarioService {
 
         billeteraService.cargarSaldo(new BigDecimal(500), "ARS", billetera, "regalo", "Bienvenida por creacion de usuario");
 
-        emailService.SendEmail(usuario.getEmail(), "Bienvenido a Billetera Virtual", "Enhorabuena! Te regalamos 500 ARS como bienvenida a Billetera Virtual! :D ");
+        emailService.SendEmail(usuario.getEmail(), "Bienvenido a La Billetera Virtual de ADA", "Felicidades! Te regalamos 500 ARS como bienvenida a Billetera Virtual! :D Saludos");
 
         return usuario;
     }
