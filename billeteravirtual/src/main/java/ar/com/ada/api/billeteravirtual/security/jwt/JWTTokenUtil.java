@@ -52,7 +52,7 @@ public class JWTTokenUtil implements Serializable {
     }
 
     // para traer cualquier informacion del token necesitamos la clave secreta
-    private Claims getAllClaimsFromToken(String token) {
+    public Claims getAllClaimsFromToken(String token) {
 
         return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
 
@@ -71,6 +71,12 @@ public class JWTTokenUtil implements Serializable {
     public String generateToken(UserDetails userDetails) {
 
         Map<String, Object> claims = new HashMap<>();
+
+        return doGenerateToken(claims, userDetails.getUsername());
+
+    }
+
+    public String generateToken(UserDetails userDetails, Map<String, Object> claims) {
 
         return doGenerateToken(claims, userDetails.getUsername());
 

@@ -5,6 +5,10 @@ import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import ar.com.ada.api.billeteravirtual.entities.Billetera;
@@ -31,7 +35,7 @@ public class UsuarioService {
     return usuarioRepository.findByUsername(username);
   }
 
-  public void login(String username, String password) {
+  public Usuario login(String username, String password) {
 
     /**
      * Metodo IniciarSesion recibe usuario y contraseña validar usuario y contraseña
@@ -43,6 +47,8 @@ public class UsuarioService {
 
       throw new BadCredentialsException("Usuario o contraseña invalida");
     }
+
+    return u;
   }
 
   public Usuario crearUsuario(String nombre, int pais, int tipoDocumento, String documento, Date fechaNacimiento,
@@ -109,6 +115,33 @@ public class UsuarioService {
     }
 
     return null;
+  }
+
+  public Map<String, Object> getUserClaims(Usuario usuario) {
+    Map<String, Object> claims = new HashMap<>();
+
+    claims.put("billeteraId", usuario.getPersona().getBilletera().getBilleteraId());
+
+    return claims;
+  }
+
+  public UserDetails getUserAsUserDetail(Usuario usuario) {
+    UserDetails uDetails;
+
+    uDetails = new User(usuario.getUsername(), usuario.getPassword(), getAuthorities(usuario));
+
+    return uDetails;
+  }
+
+  // Usamos el tipo de datos SET solo para usar otro diferente a List
+  private Set<? extends GrantedAuthority> getAuthorities(Usuario usuario) {
+
+    Set<SimpleGrantedAuthority> authorities = new HashSet<>();
+
+    Integer billeteraId = usuario.getPersona().getBilletera().getBilleteraId();
+
+    authorities.add(new SimpleGrantedAuthority("CLAIM_billeteraId_" + billeteraId));
+    return authorities;
   }
 
 }

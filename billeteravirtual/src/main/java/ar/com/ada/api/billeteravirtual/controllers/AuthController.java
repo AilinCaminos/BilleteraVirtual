@@ -1,5 +1,7 @@
 package ar.com.ada.api.billeteravirtual.controllers;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -55,11 +57,17 @@ public class AuthController {
     public ResponseEntity<?> createAuthenticationToken(@RequestBody LoginRequest authenticationRequest)
             throws Exception {
 
-        usuarioService.login(authenticationRequest.username, authenticationRequest.password);
+        Usuario usuarioLogueado = usuarioService.login(authenticationRequest.username, authenticationRequest.password);
 
-        UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.username);
+        UserDetails userDetails = usuarioService.getUserAsUserDetail(usuarioLogueado);
+        Map<String,Object> claims = usuarioService.getUserClaims(usuarioLogueado);
 
-        String token = jwtTokenUtil.generateToken(userDetails);
+        //Genero los roles pero con los Claims(los propositos)
+        //En este caso nuestros claims tienen info de la billetera(billetera id)
+        //Esta info va a viajar con el token, o sea, cualquiera puede
+        //ver las billeterasid de que user pertenecen si logran interceptar el token
+        //Por eso es que en cada request debemos validar el token(firma)
+        String token = jwtTokenUtil.generateToken(userDetails, claims);
 
         //Cambio para que devuelva el full perfil
         Usuario u = usuarioService.buscarPorUsername(authenticationRequest.username);
