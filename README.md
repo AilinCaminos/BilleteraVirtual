@@ -12,7 +12,7 @@ _Adicionalmente se utiliza MailGun para el envio de mails transaccionales, y se 
 _Se utiliza Postman para probar los web methods._
 
 Documentacion: 
-https://documenter.getpostman.com/view/11716300/T17Q6Q12?version=latest
+https://documenter.getpostman.com/view/11716300/T17Q6Q12
 
 ## Despliegue
 
