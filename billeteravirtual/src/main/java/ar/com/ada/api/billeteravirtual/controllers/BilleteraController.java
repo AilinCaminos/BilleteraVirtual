@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ar.com.ada.api.billeteravirtual.entities.Billetera;
@@ -25,6 +26,9 @@ import ar.com.ada.api.billeteravirtual.models.response.SaldoResponse;
 import ar.com.ada.api.billeteravirtual.models.response.TransaccionResponse;
 import ar.com.ada.api.billeteravirtual.services.BilleteraService;
 import ar.com.ada.api.billeteravirtual.services.UsuarioService;
+import ar.com.ada.api.billeteravirtual.sistema.pagada.models.InfoPago;
+import ar.com.ada.api.billeteravirtual.sistema.pagada.models.ResultadoPago;
+import ar.com.ada.api.billeteravirtual.sistema.pagada.models.Servicio;
 
 @RestController
 public class BilleteraController {
@@ -142,13 +146,16 @@ public class BilleteraController {
     }
 
     // Metodo Verificacion Billetera 3: haciendo lo mismo que antes, pero leyendo
-    // desde el el authority. O sea , cuando creamos el User para el UserDetails(no el usuario)
+    // desde el el authority. O sea , cuando creamos el User para el UserDetails(no
+    // el usuario)
     // Le seteamos una autoridad sobre la billetera X.
     // Esto lo que hace es preguntar si tiene esa autoridad seteada.
     // Dentro de este, tenemos 2 formas de llenar el Authority
     // Llenandolo desde la Base de datos, o desde el JWT
-    // Desde la DB nos da mas seguridad pero cada vez que se ejecute es ir a buscar a la DB
-    // Desde el JWT, si bien exponemos el billeteraId, nos permite evitarnos ir a  la db.
+    // Desde la DB nos da mas seguridad pero cada vez que se ejecute es ir a buscar
+    // a la DB
+    // Desde el JWT, si bien exponemos el billeteraId, nos permite evitarnos ir a la
+    // db.
     // Este CLAIM lo podemos hacer con cualquier propiedad que querramos mandar
     // al JWT
 
@@ -178,8 +185,9 @@ public class BilleteraController {
         }
         return ResponseEntity.ok(res);
     }
+
     @GetMapping("/billeteras/{id}/movimientos")
-    public ResponseEntity<List<MovimientosResponse>> consultarMovimientos(@PathVariable Integer id){
+    public ResponseEntity<List<MovimientosResponse>> consultarMovimientos(@PathVariable Integer id) {
 
         Billetera billetera = new Billetera();
         billetera = billeteraService.buscarPorId(id);
@@ -203,6 +211,38 @@ public class BilleteraController {
         return ResponseEntity.ok(res);
     }
 
+    // LISTA SOLO por codigo de barras.
+    @GetMapping("/billeteras/{id}/servicios")
+    @PreAuthorize("hasAuthority('CLAIM_billeteraId_'+#id)")
+    public ResponseEntity<List<Servicio>> buscarServicio(@PathVariable Integer id,
+            @RequestParam(name = "codigo", required = true) String codigoBarras) {
 
+        List<Servicio> servicios = new ArrayList<>();
+
+        servicios = billeteraService.buscarServicioPorCodigoDeBarras(codigoBarras);
+
+        return ResponseEntity.ok(servicios);
+
+    }
+
+    /**
+     * Integracion de pagaar un servicio a traves de la billetera virtual hacia el
+     * sistema de pagADA
+     */
+
+    @PostMapping("/billeteras/{id}/servicios/{servicioId}")
+    @PreAuthorize("hasAuthority('CLAIM_billeteraId_'+#id)")
+    public ResponseEntity<ResultadoPago> pagarServicio(@PathVariable Integer id, 
+                    @PathVariable Integer servicioId,
+                    @RequestBody InfoPago pago) {
+
+        ResultadoPago r = billeteraService.pagarServicio(id,servicioId, pago);
+
+        if (r.isOk) {
+            return ResponseEntity.ok(r);
+        } else {
+            return ResponseEntity.badRequest().body(r);
+        }
+    }
 
 }

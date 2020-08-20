@@ -16,6 +16,10 @@ import ar.com.ada.api.billeteravirtual.entities.Transaccion.ResultadoTransaccion
 import ar.com.ada.api.billeteravirtual.entities.Transaccion.TipoTransaccionEnum;
 import ar.com.ada.api.billeteravirtual.repositories.BilleteraRepository;
 import ar.com.ada.api.billeteravirtual.sistema.comm.EmailService;
+import ar.com.ada.api.billeteravirtual.sistema.pagada.PagADAService;
+import ar.com.ada.api.billeteravirtual.sistema.pagada.models.InfoPago;
+import ar.com.ada.api.billeteravirtual.sistema.pagada.models.ResultadoPago;
+import ar.com.ada.api.billeteravirtual.sistema.pagada.models.Servicio;
 
 @Service
 public class BilleteraService {
@@ -28,6 +32,9 @@ public class BilleteraService {
 
     @Autowired
     EmailService emailService;
+
+    @Autowired
+    PagADAService pagADAService;
 
     public void grabar(Billetera billetera) {
         billeteraRepository.save(billetera);
@@ -198,5 +205,67 @@ public class BilleteraService {
         }
         return movimientos;
     }
+    public List<Servicio> buscarServicioPorCodigoDeBarras(String codigoBarras) {
+        return pagADAService.buscarServicioPorCodigoDeBarras(codigoBarras);
+    }
 
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+    public ResultadoPago pagarServicio(Integer billeteraId, Integer servicioId, InfoPago pago) {
+
+        ResultadoPago resultadoPago = new ResultadoPago();
+
+        Billetera billetera = buscarPorId(billeteraId);
+
+        Cuenta cuenta = billetera.getCuenta(pago.getMoneda());
+
+        if (cuenta.getSaldo().compareTo(pago.getImportePagado()) == -1) {
+            resultadoPago.isOk = false;
+            resultadoPago.message = "Saldo insuficiente";
+            return resultadoPago;
+        }
+        
+        resultadoPago = pagADAService.pagarServicio(servicioId, pago);
+
+        if (resultadoPago.isOk) {
+
+            
+            Transaccion transaccion = new Transaccion();
+            // transaccion.setCuenta(cuenta);
+            transaccion.setMoneda(pago.getMoneda());
+            transaccion.setFecha(new Date());
+            transaccion.setConceptoOperacion("Pago a " + resultadoPago.nombreEmpresa);
+            transaccion.setDetalle("Pagaste a " + resultadoPago.nombreEmpresa);
+            transaccion.setImporte(pago.getImportePagado());
+            transaccion.setTipoOperacion(TipoTransaccionEnum.SALIENTE);// 1 Entrada, 0 Salida
+            transaccion.setEstadoId(2);// -1 Rechazada 0 Pendiente 2 Aprobada
+            transaccion.setDeCuentaId(cuenta.getCuentaId());
+            transaccion.setDeUsuarioId(billetera.getPersona().getUsuario().getUsuarioId());
+            transaccion.setaUsuarioId(billetera.getPersona().getUsuario().getUsuarioId());
+            transaccion.setaCuentaId(cuenta.getCuentaId());
+
+            cuenta.agregarTransaccion(transaccion);
+
+            this.grabar(billetera);
+
+            emailService.SendEmail(billetera.getPersona().getUsuario().getEmail(), "Pagaste "+resultadoPago.nombreEmpresa, "Hola! hoy pagaste " + resultadoPago.nombreEmpresa);
+
+        }
+
+        
+
+        return resultadoPago;
+    }
 }
