@@ -1,0 +1,99 @@
+﻿<div class="card">
+    <table class="table" style="padding: 0px">
+        <tr>
+            <td title="Saldo">Saldo</td>
+            <td title="Moneda">Moneda</td>
+            <td title="Detalle">Detalle</td>
+            <td title="Transferir">Transferir</td>
+        </tr>
+        <tr *ngFor="let saldo of saldos">
+            <td>
+                <span (click)="loadMovimientos(saldo.moneda)">{{saldo.saldo | currency:'ARS'}} </span>
+            </td>
+            <td>
+                <strong>{{saldo.moneda}}</strong>
+            </td>
+            <td>
+                <span (click)="loadMovimientos(saldo.moneda)">Ver</span>
+            </td>
+            <td>
+                <span (click)="comenzarTransferencia(saldo.moneda)">Iniciar</span>
+            </td>
+        </tr>
+
+    </table>
+</div>
+
+<div class="card" *ngIf="movimientos">
+    <table class="table" style="padding: 0px">
+        <tr>
+            <td title="Fecha">Fecha</td>
+            <td title="Tipo">Tipo</td>
+            <td title="Importe">Importe</td>
+            <td title="Moneda" *ngIf="false">Moneda</td>
+            <td title="Descripcion">Descripcion</td>
+        </tr>
+        <tr *ngFor="let mov of movimientos">
+            <td>
+                <strong>{{mov.fecha | date:'short'}}</strong>
+
+            </td>
+            <td>
+                <strong>{{mov.tipoOperacion}}</strong>
+            </td>
+            <td>
+                <span *ngIf="mov.tipoOperacion == 'SALIENTE'">{{-mov.importe | currency:'ARS' }}</span>
+                <span *ngIf="mov.tipoOperacion == 'ENTRANTE'">{{ mov.importe | currency:'ARS' }}</span>
+
+            </td>
+            <td *ngIf="false">
+                <strong>{{mov.moneda}}</strong>
+            </td>
+            <td>
+                <strong>{{mov.conceptoOperacion}} - {{mov.detalle}}  {{mov.aUsuario}}</strong>
+            </td>
+        </tr>
+
+    </table>
+</div>
+
+
+<kendo-dialog title="Transferir" *ngIf="hacerTransferencia" (close)="onCancelarTransferencia($event)" [minWidth]="400">
+    <h4>Transferir a</h4>
+
+    <form [formGroup]="transferenciaForm">
+        <div class="form-group">
+            <label for="transferirA" class="control-label">Email Destinatario  </label>
+            <input type="text" class="k-textbox" formControlName="transferirA" />
+        </div>
+        <div class="form-group">
+            <label for="importeATransferir" class="control-label">Importe</label>
+            <kendo-numerictextbox [format]="'c2'" [min]="0" [decimals]="2" formControlName="importeATransferir"
+                title="Precio para la hoja">
+            </kendo-numerictextbox>
+
+            <label for="moneda" class="control-label" *ngIf="false">Moneda</label>
+            <input type="text" class="k-textbox" formControlName="moneda" readonly="true" />
+        </div>
+        <div class="form-group">
+
+            <label for="concepto" class="control-label">Concepto</label>
+            <input type="text" class="k-textbox" formControlName="concepto" />
+        </div>
+        <div class="form-group">
+
+            <label for="descripcion" class="control-label">Descripcion</label>
+            <input type="text" class="k-textbox" formControlName="descripcion" />
+
+        </div>
+
+    </form>
+
+    <kendo-dialog-actions>
+        <button kendoButton [disabled]="onTransfiriendo" [primary]="true"
+            (click)="onTransferir($event)">Transferir</button>
+        <button kendoButton (click)="onCancelarTransferencia($event)">Cancelar</button>
+    </kendo-dialog-actions>
+
+
+</kendo-dialog>

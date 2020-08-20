@@ -1,0 +1,64 @@
+﻿<div class="card">
+
+    <div>
+
+        <form [formGroup]="servicioForm">
+
+            <div class="form-group">
+                <label for="codigoBarras" class="control-label">Codigo Barras   </label>
+                <input type="text" class="k-textbox" formControlName="codigoBarras" />
+                
+
+            </div>
+
+        </form>
+        <button kendoButton [primary]="true" (click)="onBuscarServicio($event)">Buscar servicio</button>
+    </div>
+
+    <table class="table" style="padding: 0px" *ngIf="servicios">
+        <tr>
+            <td title="Empresa">Empresa</td>
+            <td title="Importe">Importe</td>
+            <td title="moneda">Moneda</td>
+            <td title="Vencimiento">Vencimiento</td>
+            <td title="Pagar">Pagar</td>
+        </tr>
+        <tr *ngFor="let servicio of servicios">
+            <td>
+                {{servicio.empresa}}
+            </td>
+            <td>
+                {{servicio.importe | currency:'ARS'}}
+            </td>
+            <td>
+                {{servicio.moneda}}
+            </td>
+            <td>
+                {{servicio.fechaVencimiento | date:'short'}}
+            </td>
+
+            <td>
+                <span (click)="comenzarPago(servicio)" *ngIf="servicio.estado == 'PENDIENTE'"> <span class="fa fa-money-bill-wave"></span>Pagar!</span>
+                <span *ngIf="servicio.estado != 'PENDIENTE'">Ya Pagado!</span>
+            </td>
+        </tr>
+
+    </table>
+</div>
+
+
+
+<kendo-dialog title="Pagar" *ngIf="hacerPago" (close)="onCancelarPago($event)" [minWidth]="400">
+    <h4>Pagar {{servicioAPagar.empresa}}</h4>
+    <span>Queres pagar {{servicioAPagar.empresa}} por {{servicioAPagar.importe | currency:'ARS'}} </span>
+    <span>-- aca puede venir todo un form de formas de pago, por ejemplo con tarjeta y otros -- Ahora solo usamos
+        saldo</span>
+
+
+    <kendo-dialog-actions>
+        <button kendoButton [disabled]="onPagando" [primary]="true" (click)="onPagar($event)">Por supuesto!</button>
+        <button kendoButton (click)="onCancelarPago($event)">No!!! que me corten el servicio</button>
+    </kendo-dialog-actions>
+
+
+</kendo-dialog>

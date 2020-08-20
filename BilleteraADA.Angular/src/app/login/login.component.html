@@ -1,0 +1,44 @@
+﻿<div class="container inline">
+    <div class="row">
+        <div class="wrap-login">
+
+            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+                <div class="form-logo">
+                    <img src="assets/logo2.png" class="logo-rounded-corners">
+                </div>
+                <div class="form-group login-form-title">
+                    INGRESAR
+                </div>
+                <div class="form-group">
+                    <kendo-textbox-container floatingLabel="Email" style="width: 100%">
+                        <input kendoTextBox type="email" formControlName="username"
+                            [ngClass]="{ 'is-invalid': submitted && f.username.errors }" />
+
+                        <div *ngIf="submitted && f.username.errors" class="invalid-feedback">
+                            <div *ngIf="f.username.errors.required">Usuario es obligatorio</div>
+                        </div>
+                    </kendo-textbox-container>
+                </div>
+                <div class="form-group">
+                    <kendo-textbox-container floatingLabel="Contraseña" style="width: 100%">
+                        <input kendoTextBox type="password" formControlName="password"
+                            [ngClass]="{ 'is-invalid': submitted && f.password.errors }" />
+
+                        <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
+                            <div *ngIf="f.password.errors.required">Contraseña es obligatoria</div>
+                        </div>
+                    </kendo-textbox-container>
+                </div>
+                <div class="form-group">
+                    <button kendoButton [disabled]="loading" primary="true">
+                        <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+                        Ingresar
+                    </button>
+                    <a routerLink="/register" class="btn btn-link">Registrarse</a>
+                </div>
+             
+            </form>
+        </div>
+        
+    </div>
+</div>

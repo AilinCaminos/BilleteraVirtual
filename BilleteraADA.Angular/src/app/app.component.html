@@ -1,0 +1,52 @@
+<!-- nav -->
+<nav class="navbar navbar-icon-top sticky-top navbar-expand-lg navbar-Empresa" *ngIf="currentUser">
+    <a class="navbar-brand" href="#"><img src="assets/logo.png" class="logo-rounded-corners"></a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="nav-link" routerLink="/">
+                    <i class="fa fa-home"></i>
+                    Saldos
+                </a>
+            </li>
+            
+            <li class="nav-item active">
+                <a class="nav-link" routerLink="/pago-servicios">
+                    <i class="fa fa-head-side-mask"></i>
+                    Pagar Servicios
+                </a>
+            </li>
+            
+            <li class="nav-item">
+
+                <a class="nav-link" (click)="logout()">
+                    <i class="fa fa-sign-out">
+
+                    </i>
+
+                    Salir
+                </a>
+
+            </li>
+
+        </ul>
+        
+    </div>
+</nav>
+
+<!-- main app container -->
+<div class="todo">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <alert></alert>
+                <router-outlet></router-outlet>
+            </div>
+        </div>
+    </div>
+</div>

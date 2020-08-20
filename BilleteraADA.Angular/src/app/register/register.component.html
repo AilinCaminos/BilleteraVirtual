@@ -1,0 +1,55 @@
+﻿<h2>Registrarme</h2>
+<form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="k-form">
+    <div class="form-group">
+        <label for="fullName">Nombre Completo</label>
+        <input type="text" formControlName="fullName" class="k-textbox form-control"
+            [ngClass]="{ 'is-invalid': submitted && f.fullName.errors }" />
+        <div *ngIf="submitted && f.fullName.errors" class="invalid-feedback">
+            <div *ngIf="f.fullName.errors.required">Nombre es obligatorio</div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" formControlName="email" class="k-textbox form-control"
+            [ngClass]="{ 'is-invalid': submitted && f.email.errors }" />
+        <div *ngIf="submitted && f.email.errors" class="invalid-feedback">
+            <div *ngIf="f.email.errors.required">Email es obligatorio</div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="dni">DNI</label>
+        <input type="text" formControlName="dni" class="k-textbox form-control"
+            [ngClass]="{ 'is-invalid': submitted && f.dni.errors }" />
+        <div *ngIf="submitted && f.dni.errors" class="invalid-feedback">
+            <div *ngIf="f.dni.errors.required">DNI</div>
+        </div>
+    </div>
+    
+    <div class="form-group">
+        <label for="password">Contraseña</label>
+        <input type="password" formControlName="password" class="k-textbox form-control"
+            [ngClass]="{ 'is-invalid': submitted && f.password.errors }" />
+        <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
+            <div *ngIf="f.password.errors.required">Contraseña es obligatoria</div>
+            <div *ngIf="f.password.errors.minlength">La contraseña debe ser al menos 8 caracteres de largo incluyendo un digito</div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="confirmPassword">Repetir Contraseña</label>
+        <input type="password" formControlName="confirmPassword" class="k-textbox form-control"
+            [ngClass]="{ 'is-invalid': submitted && f.confirmPassword.errors }" />
+        <div *ngIf="submitted && f.confirmPassword.errors" class="invalid-feedback">
+            <div *ngIf="f.confirmPassword.errors.required">Contraseña es obligatoria</div>
+            <div *ngIf="f.confirmPassword.errors.minlength">La contraseña debe ser al menos 8 caracteres y un digito
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <button kendoButton type="submit" [disabled]="loading" [primary]="true">
+            <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+            Registrarme
+        </button>
+        <a routerLink="/login" class="btn btn-link">Cancelar</a>
+    </div>
+</form>
